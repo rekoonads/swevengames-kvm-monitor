@@ -1,0 +1,7 @@
+# Disable Nixpacks - use Dockerfile instead
+[phases.setup]
+aptPkgs = []
+nixPkgs = []
+
+[start]
+cmd = "echo 'Use Dockerfile instead'"
