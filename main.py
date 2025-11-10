@@ -20,14 +20,22 @@ except ImportError:
 def load_config():
     with open('config/modules_config.json', 'r') as f:
         config = json.load(f)
-    
-    # Filter out kvm_monitor if libvirt is not available
+
+    # Get modules - handle both string format and dict format
     modules = config.get("modules", [])
-    if not LIBVIRT_AVAILABLE and "kvm_monitor" in modules:
-        modules = [module for module in modules if module != "kvm_monitor"]
+
+    # Convert dict format to string format if needed
+    if modules and isinstance(modules[0], dict):
+        module_names = [m['name'] for m in modules]
+    else:
+        module_names = modules
+
+    # Filter out kvm_monitor if libvirt is not available
+    if not LIBVIRT_AVAILABLE and "kvm_monitor" in module_names:
+        module_names = [m for m in module_names if m != "kvm_monitor"]
         logger.warning("libvirt not available. Disabling kvm_monitor module.")
-    
-    return modules
+
+    return module_names
 
 
 def run_module(module_name):
